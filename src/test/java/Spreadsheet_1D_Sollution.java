@@ -10,92 +10,162 @@ public class Spreadsheet_1D_Sollution {
     @Test
     public void test2()  {
             Spreadsheet_Scanner in = new Spreadsheet_Scanner(System.in);
-            int N = in.nextInt();
-            String [] operations = new String [N];
-            String [] args1 = new String [N];
-            String [] args2 = new String [N];
-            for (int i = 0; i < N; i++) {
-                String operation = in.next();
-                String arg1 = in.next();
-                String arg2 = in.next();
+        int N = in.nextInt();
+        String [] operations = new String [N];
+        String [] args1 = new String [N];
+        String [] args2 = new String [N];
+        for (int i = 0; i < N; i++) {
+            String operation = in.next();
+            String arg1 = in.next();
+            String arg2 = in.next();
 
 
-                operations[i] = operation;
-                args1[i] = arg1;
-                args2[i] = arg2;
+            operations[i] = operation;
+            args1[i] = arg1;
+            args2[i] = arg2;
 
-                System.err.println(" operations[" + i + "] = " + operations[i]);
-                System.err.println(" args1[" + i + "] = " + args1[i]);
-                System.err.println(" args2[" + i + "] = " + args2[i]);
+            System.err.println(" operations[" + i + "] = " + operations[i]);
+            System.err.println(" args1[" + i + "] = " + args1[i]);
+            System.err.println(" args2[" + i + "] = " + args2[i]);
 
-            }
+        }
+        HashMap<Integer, Integer> myHashMap = new HashMap<Integer, Integer>();
 
-            int [] result = new int [N];
-            int [] values1 = new int [N];
-            int [] values2 = new int [N];
-            for (int i = 0; i < N; i++) {
-                if (operations[i].contains("VALUE")){
-                    values1[i] = Integer.parseInt(args1[i]);
-                    result[i] = values1[i] ;
-                }
-                else continue;
+        int stop;
+        int start = 0;
 
-            }
-
+        do {
+            stop = start;
             for (int i = 0; i < N; i++) {
 
-
-                values1[i] = 0;
-                values2[i] = 0;
-
-                if (args1[i].indexOf('$') == 0) {
-                    String s1 = args1[i].substring(1, args1[i].length());
-                    int  si1 = Integer.parseInt(s1);
-                    values1[i] = result[si1];
-                }
-
-                else values1[i] = Integer.parseInt(args1[i]);
-
-                if (args2[i].indexOf('$') == 0) {
-                    String s2 = args2[i].substring(1, args2[i].length());
-                    int  si2 = Integer.parseInt(s2);
-                    values2[i] = result[si2];
-                }
-
-
-                if (args2[i].indexOf('$') != 0 && args2[i].indexOf('_') != 0 )  values2[i] = Integer.parseInt(args2[i]);
-
-                switch (operations[i] ){
-
-
+                CYCLE:   switch (operations[i]) {
                     case "VALUE" :
-                        System.out.println(result[i]);
-
-                        //  result[i] = values1[i] ;
+                        myHashMap.put( i ,Integer.parseInt(args1[i]));
                         break;
+
+
                     case "ADD" :
-                        result[i] = values1[i] + values2[i];
-                        System.out.println( result[i]);
-                        break;
-                    case "SUB" :
-                        result[i] = values1[i] - values2[i];
-                        System.out.println( result[i]);
-                        break;
-                    case "MULT" :
+                        if ((args1[i].indexOf('$') != 0) &&  (args2[i].indexOf('$') != 0)) {
+                            myHashMap.put( i ,Integer.parseInt(args1[i]) + Integer.parseInt(args2[i]));
+                            break CYCLE;
+                        }
+                        if ((args1[i].indexOf('$')  == 0) && (args2[i].indexOf('$')  == 0)){
+                            Integer s1i = convert(args1[i]);
+                            Integer s2i = convert(args2[i]);
 
-                        result[i] = values1[i] * values2[i];
-                        System.out.println( result[i]);
-                        break;
-                    default: result [i] = 0;
+                            if (myHashMap.get(s1i) == null) break CYCLE;
+                            if(myHashMap.get(s2i) == null) break CYCLE;
+                            else myHashMap.put(i, (myHashMap.get(s1i) + myHashMap.get(s1i)));
+
+                        }
+                        if ((args1[i].indexOf('$')  == 0) && (args2[i].indexOf('$')  != 0)){
+                            Integer s1i = convert(args1[i]);
+                            Integer s2i = Integer.parseInt(args2[i]);
+
+                            if (myHashMap.get(s1i) == null) break CYCLE;
+                            else myHashMap.put(i, (myHashMap.get(s1i) + s2i));
+
+                        }
+                        if ((args1[i].indexOf('$')  != 0) && (args2[i].indexOf('$')  == 0)){
+
+                            Integer s1i = Integer.parseInt(args1[i]);
+                            Integer s2i = convert(args2[i]);
+
+                            if (myHashMap.get(s2i) == null) break CYCLE;
+                            else myHashMap.put(i, (myHashMap.get(s2i) + s1i));
+
+                        }
+
+
+
+                    case "SUB" :
+                        if ((args1[i].indexOf('$') != 0) &&  (args2[i].indexOf('$') != 0)) {
+                            myHashMap.put( i ,Integer.parseInt(args1[i]) + Integer.parseInt(args2[i]));
+                            break CYCLE;
+                        }
+                        if ((args1[i].indexOf('$')  == 0) && (args2[i].indexOf('$')  == 0)){
+                            Integer s1i = convert(args1[i]);
+                            Integer s2i = convert(args2[i]);
+
+                            if (myHashMap.get(s1i) == null) break CYCLE;
+                            if(myHashMap.get(s2i) == null) break CYCLE;
+                            else myHashMap.put(i, (myHashMap.get(s1i) + myHashMap.get(s1i)));
+
+                        }
+                        if ((args1[i].indexOf('$')  == 0) && (args2[i].indexOf('$')  != 0)){
+                            Integer s1i = convert(args1[i]);
+                            Integer s2i = Integer.parseInt(args2[i]);
+
+                            if (myHashMap.get(s1i) == null) break CYCLE;
+                            else myHashMap.put(i, (myHashMap.get(s1i) - s2i));
+
+                        }
+                        if ((args1[i].indexOf('$')  != 0) && (args2[i].indexOf('$')  == 0)){
+
+                            Integer s1i = Integer.parseInt(args1[i]);
+                            Integer s2i = convert(args2[i]);
+
+                            if (myHashMap.get(s2i) == null) break CYCLE;
+                            else myHashMap.put(i, (  s1i - myHashMap.get(s2i)));
+
+                        }
+
+
+                    case "MULT" :
+                        if ((args1[i].indexOf('$') != 0) &&  (args2[i].indexOf('$') != 0)) {
+                            myHashMap.put( i ,Integer.parseInt(args1[i]) + Integer.parseInt(args2[i]));
+                            break CYCLE;
+                        }
+                        if ((args1[i].indexOf('$')  == 0) && (args2[i].indexOf('$')  == 0)){
+                            Integer s1i = convert(args1[i]);
+                            Integer s2i = convert(args2[i]);
+
+                            if (myHashMap.get(s1i) == null) break CYCLE;
+                            if(myHashMap.get(s2i) == null) break CYCLE;
+                            else myHashMap.put(i, (myHashMap.get(s1i) + myHashMap.get(s1i)));
+
+                        }
+                        if ((args1[i].indexOf('$')  == 0) && (args2[i].indexOf('$')  != 0)){
+                            Integer s1i = convert(args1[i]);
+                            Integer s2i = Integer.parseInt(args2[i]);
+
+                            if (myHashMap.get(s1i) == null) break CYCLE;
+                            else myHashMap.put(i, (myHashMap.get(s1i) * s2i));
+
+                        }
+                        if ((args1[i].indexOf('$')  != 0) && (args2[i].indexOf('$')  == 0)){
+
+                            Integer s1i = Integer.parseInt(args1[i]);
+                            Integer s2i = convert(args2[i]);
+
+                            if (myHashMap.get(s2i) == null) break CYCLE;
+                            else myHashMap.put(i, (  s1i * myHashMap.get(s2i)));
+
+                        }
+
                 }
+
+
+
+
             }
+            for (int i = 0; i < N; i++){
+                if (myHashMap.get(i) == null ) stop += 1;
+
+            }
+        } while ( stop != start);
+
+        for (int i = 0; i < N; i++){
+            System.out.println( myHashMap.get(i) ) ;
+
         }
 
-        // Write an action using System.out.println()
-        // To debug: System.err.println("Debug messages...");
 
-        //  System.out.println("1");
+    }
 
-
-
+    public static int convert(String arg){
+        String str = arg.substring(1, arg.length());
+        int si = Integer.parseInt(str);
+        return si;
+    }
 }
